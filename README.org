@@ -30,7 +30,7 @@ You can change to different versions of AME:
 #+RESULTS:
 : 92.8196613304317
 
-Indicating that the mass of $^{20}$Mg was 93 keV greater in AME 1993 compared to 2020.
+Indicating that the mass of \(^{20}\)Mg was 93 keV greater in AME 1993 compared to 2020.
 
 ENSDF is also included, and is automatically updated whenever the package is loaded.
 #+begin_src lisp
@@ -40,16 +40,38 @@ ENSDF is also included, and is automatically updated whenever the package is loa
 #+RESULTS:
 : 3/2+
 
-You can look for levels that match a lab-frame resonance energy.
+Look for levels in ENSDF:
 #+begin_src lisp
-  (mapc (lambda (level)
-            (print level))
-          (nuclear-mass:find-states-near-resonance 170.0 "1h" "23na" :delta 20.0))
+  (nuclear-mass:find-levels "24mg" 0.0 :energy-range '(0.0 5000.0))
+#+end_src
+
+#+RESULTS:
+: (#<NUCLEAR-MASS::LEVEL {Ex=0 | Jpi=0+}>
+:  #<NUCLEAR-MASS::LEVEL {Ex=1368.667 | Jpi=2+}>
+:  #<NUCLEAR-MASS::LEVEL {Ex=4122.853 | Jpi=4+}>
+:  #<NUCLEAR-MASS::LEVEL {Ex=4238.35 | Jpi=2+}>)
+
+You can look for levels that match a lab-frame resonance energy. Also tells you
+the excitation energies and center-of-mass resonance energies from your value.
+#+begin_src lisp
+  (nuclear-mass:find-states-near-resonance 170.0 "1h" "23na" :delta 20.0)
 #+end_src
 
 #+RESULTS:
 : (#<NUCLEAR-MASS::LEVEL {Ex=11860 | Jpi=(8+)}>
 :  #<NUCLEAR-MASS::LEVEL {Ex=11862.8 | Jpi=1-}>)
+: 11855.556539522982
+: 162.86052371825485
+
+If you hate strings, there are macros:
+
+#+begin_src lisp
+  (nuclear-mass:with-atomic-masses (1h 23na 24mg)
+    (nuclear-mass:atomic-units->kev (-  (+ 23na 1h) 24mg)))
+#+end_src
+
+#+RESULTS:
+: 11692.696015804728
 
 *AND MORE!*
 
