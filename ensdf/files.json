@@ -1,0 +1,451 @@
+{
+    "distributions": [
+        {
+            "year": "2004",
+            "files": [
+                "Ensdf.upd",
+                "ensdf_0403_070.zip",
+                "ensdf_0403_130.zip",
+                "ensdf_0403_180.zip",
+                "ensdf_0403_293.zip",
+                "ensdf_0403_upd.zip",
+                "ENSDF_0410.upd",
+                "ENSDF_0410_099.zip",
+                "ENSDF_0410_199.zip",
+                "ENSDF_0410_293.zip",
+                "ENSDF_0410_upd.zip"
+            ]
+        },
+        {
+            "year": "2005",
+            "files": [
+                "A_100_199",
+                "A_100_199.zip",
+                "A_1_99",
+                "A_1_99.zip",
+                "A_200_293",
+                "A_200_293.zip",
+                "ensdf_0503.upd",
+                "ensdf_0503_099.zip",
+                "ensdf_0503_199.zip",
+                "ensdf_0503_293.zip",
+                "ensdf_0503_upd.zip",
+                "ensdf_0509.upd",
+                "ensdf_0509_099.zip",
+                "ensdf_0509_199.zip",
+                "ensdf_0509_293.zip",
+                "ensdf_0509_upd.zip"
+            ]
+        },
+        {
+            "year": "2006",
+            "files": [
+                "dsid.upd",
+                "dsid_0603.upd",
+                "dsid_0603_tbl.upd",
+                "ENSDF_0603.upd",
+                "ENSDF_0603_099.zip",
+                "ENSDF_0603_199.zip",
+                "ENSDF_0603_294.zip",
+                "ENSDF_0603_upd.zip",
+                "ENSDF_0608_099.zip",
+                "ENSDF_0608_199.zip",
+                "ENSDF_0608_294.zip",
+                "ENSDF_0608_upd.zip"
+            ]
+        },
+        {
+            "year": "2007",
+            "files": [
+                "dsid.upd",
+                "dsid_0703_tbl.upd",
+                "dsid_0709.upd",
+                "ensdf_0703.upd",
+                "ensdf_0703_099.zip",
+                "ensdf_0703_199.zip",
+                "ensdf_0703_294.zip",
+                "ensdf_0703_upd.zip",
+                "ensdf_0709.upd",
+                "ensdf_0709_099.zip",
+                "ensdf_0709_199.zip",
+                "ensdf_0709_294.zip",
+                "ensdf_0709_upd.zip"
+            ]
+        },
+        {
+            "year": "2008",
+            "files": [
+                "ensdf_0803.upd",
+                "ensdf_0803_099.zip",
+                "ensdf_0803_199.zip",
+                "ensdf_0803_294.zip",
+                "ensdf_0803_upd.zip",
+                "ensdf_0810.upd",
+                "ensdf_0810_099.zip",
+                "ensdf_0810_199.zip",
+                "ensdf_0810_294.zip",
+                "ensdf_0810_upd.zip"
+            ]
+        },
+        {
+            "year": "2009",
+            "files": [
+                "ensdf.066",
+                "ensdf_0904.upd",
+                "ensdf_0904_099.zip",
+                "ensdf_0904_199.zip",
+                "ensdf_0904_294.zip",
+                "ensdf_0904_upd.zip",
+                "ensdf_0910.upd",
+                "ensdf_0910.zip",
+                "ensdf_0910_099.zip",
+                "ensdf_0910_199.zip",
+                "ensdf_0910_299.zip",
+                "fmtchk.rpt",
+                "xundl_0904.upd",
+                "xundl_090413.all",
+                "xundl_090413.zip",
+                "xundl_0904_upd.zip",
+                "xundl_091026.all",
+                "xundl_091026.upd",
+                "xundl_091026.zip"
+            ]
+        },
+        {
+            "year": "2010",
+            "files": [
+                "ensdf_1004.upd",
+                "ensdf_1004_099.zip",
+                "ensdf_1004_199.zip",
+                "ensdf_1004_294.zip",
+                "ensdf_1004_upd.zip",
+                "ensdf_1010.upd",
+                "ensdf_1010_099.zip",
+                "ensdf_1010_199.zip",
+                "ensdf_1010_294.zip",
+                "ensdf_1010_upd.zip",
+                "xundl_1004.upd",
+                "xundl_1004.zip",
+                "xundl_1010.all",
+                "xundl_1010.upd",
+                "xundl_1010.zip"
+            ]
+        },
+        {
+            "year": "2011",
+            "files": [
+                "ensdf.031",
+                "ensdf.031.msg",
+                "ensdf_1103.upd",
+                "ensdf_1103_099.zip",
+                "ensdf_1103_199.zip",
+                "ensdf_1103_299.zip",
+                "ensdf_1109.upd",
+                "ensdf_1109_099.zip",
+                "ensdf_1109_199.zip",
+                "ensdf_1109_299.zip",
+                "ensdf_1109_upd.zip",
+                "xundl_1103.upd",
+                "xundl_1103.zip",
+                "xundl_1109.all",
+                "xundl_1109.upd",
+                "xundl_1109.zip",
+                "xundl_1109_upd.zip"
+            ]
+        },
+        {
+            "year": "2012",
+            "files": [
+                "ensdf_120307_099.zip",
+                "ensdf_120307_199.zip",
+                "ensdf_120307_299.zip",
+                "ensdf_120307_upd.zip",
+                "ensdf_121023.upd",
+                "ensdf_121023_099.zip",
+                "ensdf_121023_199.zip",
+                "ensdf_121023_294.zip",
+                "ensdf_121023_upd.zip",
+                "xundl_120307.zip",
+                "xundl_120307_upd.zip",
+                "xundl_121023.all",
+                "xundl_121023.upd",
+                "xundl_121023.zip",
+                "xundl_121023_upd.zip"
+            ]
+        },
+        {
+            "year": "2013",
+            "files": [
+                "ensdf_130313.upd",
+                "ensdf_130313_099.zip",
+                "ensdf_130313_199.zip",
+                "ensdf_130313_294.zip",
+                "ensdf_130313_upd.zip",
+                "ensdf_131009.upd",
+                "ensdf_131009_099.zip",
+                "ensdf_131009_199.zip",
+                "ensdf_131009_294.zip",
+                "xundl.all",
+                "xundl_130313.upd",
+                "xundl_130313.zip",
+                "xundl_130313_upd.zip",
+                "xundl_131009.upd",
+                "xundl_131009.zip"
+            ]
+        },
+        {
+            "year": "2014",
+            "files": [
+                "ensdf_140416.upd",
+                "ensdf_140416_099.zip",
+                "ensdf_140416_199.zip",
+                "ensdf_140416_294.zip",
+                "ensdf_140416_upd.zip",
+                "ensdf_141022.upd",
+                "ensdf_141022_099.zip",
+                "ensdf_141022_199.zip",
+                "ensdf_141022_299.zip",
+                "ensdf_141022_upd.zip",
+                "xundl_140416_all.zip",
+                "xundl_140416_upd.zip",
+                "xundl_141022.upd",
+                "xundl_141022_all.zip",
+                "xundl_141022_upd.zip"
+            ]
+        },
+        {
+            "year": "2015",
+            "files": [
+                "ensdf_150602_099.zip",
+                "ensdf_150602_199.zip",
+                "ensdf_150602_299.zip",
+                "ensdf_150602_upd.zip",
+                "ensdf_151208_099.zip",
+                "ensdf_151208_199.zip",
+                "ensdf_151208_294.zip",
+                "ensdf_151208_upd.zip",
+                "xundl_150602_all.zip",
+                "xundl_150602_upd.zip",
+                "xundl_151208_all.zip",
+                "xundl_151208_upd.zip"
+            ]
+        },
+        {
+            "year": "2016",
+            "files": [
+                "ensdf_160816_099.zip",
+                "ensdf_160816_199.zip",
+                "ensdf_160816_299.zip",
+                "ensdf_161201_099.zip",
+                "ensdf_161201_199.zip",
+                "ensdf_161201_299.zip",
+                "xundl_160816_all.zip"
+            ]
+        },
+        {
+            "year": "2017",
+            "files": [
+                "ensdf_170101_099.zip",
+                "ensdf_170101_199.zip",
+                "ensdf_170101_299.zip",
+                "ensdf_170201_099.zip",
+                "ensdf_170201_199.zip",
+                "ensdf_170201_299.zip",
+                "ensdf_170301_099.zip",
+                "ensdf_170301_199.zip",
+                "ensdf_170301_299.zip",
+                "ensdf_170406_099.zip",
+                "ensdf_170406_199.zip",
+                "ensdf_170406_299.zip",
+                "ensdf_170501.099.zip",
+                "ensdf_170501_199.zip",
+                "ensdf_170501_299.zip",
+                "ensdf_170601_099.zip",
+                "ensdf_170601_199.zip",
+                "ensdf_170601_299.zip",
+                "ensdf_170701_099.zip",
+                "ensdf_170701_199.zip",
+                "ensdf_170701_299.zip",
+                "ensdf_170801_099.zip",
+                "ensdf_170801_199.zip",
+                "ensdf_170801_299.zip",
+                "ensdf_171001_099.zip",
+                "ensdf_171001_199.zip",
+                "ensdf_171001_299.zip",
+                "ensdf_171116_099.zip",
+                "ensdf_171116_199.zip",
+                "ensdf_171116_299.zip",
+                "xundl_171001_all.zip"
+            ]
+        },
+        {
+            "year": "2018",
+            "files": [
+                "ensdf_180110_099.zip",
+                "ensdf_180110_199.zip",
+                "ensdf_180110_299.zip",
+                "ensdf_180201_099.zip",
+                "ensdf_180201_199.zip",
+                "ensdf_180201_299.zip",
+                "ensdf_180306_099.zip",
+                "ensdf_180306_199.zip",
+                "ensdf_180306_299.zip",
+                "ensdf_180501_099.zip",
+                "ensdf_180501_199.zip",
+                "ensdf_180501_299.zip",
+                "ensdf_180601_099.zip",
+                "ensdf_180601_199.zip",
+                "ensdf_180601_299.zip",
+                "ensdf_180701_099.zip",
+                "ensdf_180701_199.zip",
+                "ensdf_180701_299.zip",
+                "ensdf_180801_099.zip",
+                "ensdf_180801_199.zip",
+                "ensdf_180801_299.zip",
+                "ensdf_180901_099.zip",
+                "ensdf_180901_199.zip",
+                "ensdf_180901_299.zip",
+                "ensdf_181001_099.zip",
+                "ensdf_181001_199.zip",
+                "ensdf_181001_299.zip",
+                "ensdf_181101_099.zip",
+                "ensdf_181101_199.zip",
+                "ensdf_181101_299.zip",
+                "xundl_181001.all",
+                "xundl_181001.all.zip",
+                "xundl_181001.upd",
+                "xundl_181001.upd.zip"
+            ]
+        },
+        {
+            "year": "2019",
+            "files": [
+                "ensdf_190101_099.zip",
+                "ensdf_190101_199.zip",
+                "ensdf_190101_299.zip",
+                "ensdf_190201_099.zip",
+                "ensdf_190201_199.zip",
+                "ensdf_190201_300.zip",
+                "ensdf_190301_099.zip",
+                "ensdf_190301_199.zip",
+                "ensdf_190301_300.zip",
+                "ensdf_190401_099.zip",
+                "ensdf_190401_199.zip",
+                "ensdf_190401_300.zip",
+                "ensdf_190501_099.zip",
+                "ensdf_190501_199.zip",
+                "ensdf_190501_300.zip",
+                "ensdf_191004_099.zip",
+                "ensdf_191004_199.zip",
+                "ensdf_191004_300.zip",
+                "xundl_191101_all.zip"
+            ]
+        },
+        {
+            "year": "2020",
+            "files": [
+                "ensdf_200101_099.zip",
+                "ensdf_200101_199.zip",
+                "ensdf_200101_300.zip",
+                "ensdf_200201_099.zip",
+                "ensdf_200201_199.zip",
+                "ensdf_200201_300.zip",
+                "ensdf_200301_099.zip",
+                "ensdf_200301_199.zip",
+                "ensdf_200301_300.zip",
+                "ensdf_200408_099.zip",
+                "ensdf_200408_199.zip",
+                "ensdf_200408_300.zip",
+                "ensdf_200529_099.zip",
+                "ensdf_200529_199.zip",
+                "ensdf_200529_300.zip",
+                "ensdf_200629_099.zip",
+                "ensdf_200629_199.zip",
+                "ensdf_200629_300.zip",
+                "ensdf_200901_099.zip",
+                "ensdf_200901_199.zip",
+                "ensdf_200901_300.zip",
+                "ensdf_201001_099.zip",
+                "ensdf_201001_199.zip",
+                "ensdf_201001_300.zip",
+                "ensdf_201201_099.zip",
+                "ensdf_201201_199.zip",
+                "ensdf_201201_300.zip",
+                "xundl_201001.all.zip"
+            ]
+        },
+        {
+            "year": "2021",
+            "files": [
+                "ensdf_210201_099.zip",
+                "ensdf_210201_199.zip",
+                "ensdf_210201_300.zip",
+                "ensdf_210401_099.zip",
+                "ensdf_210401_199.zip",
+                "ensdf_210401_300.zip",
+                "ensdf_210701_199.zip",
+                "ensdf_210701_300.zip",
+                "ensdf_211101_099.zip",
+                "ensdf_211101_199.zip",
+                "ensdf_211101_300.zip",
+                "xundl_210701_all.zip"
+            ]
+        },
+        {
+            "year": "2022",
+            "files": [
+                "ensdf_220101.zip",
+                "ensdf_220201.zip",
+                "ensdf_220301.zip",
+                "ensdf_220405.zip",
+                "ensdf_220502.zip",
+                "ensdf_220601.zip",
+                "ensdf_220701.zip",
+                "ensdf_220805.zip",
+                "ensdf_220901.zip",
+                "ensdf_221004.zip",
+                "ensdf_221101.zip",
+                "ensdf_221201.zip"
+            ]
+        },
+        {
+            "year": "2023",
+            "files": [
+                "ensdf_230109.zip",
+                "ensdf_230201.zip",
+                "ensdf_230301.zip",
+                "ensdf_230403.zip",
+                "ensdf_230501.zip",
+                "ensdf_230601.zip",
+                "ensdf_230705.zip",
+                "ensdf_230801.zip",
+                "ensdf_230901.zip",
+                "ensdf_231001.zip",
+                "ensdf_231101.zip",
+                "ensdf_231210.zip"
+            ]
+        },
+        {
+            "year": "2024",
+            "files": [
+                "ensdf_240201.zip",
+                "ensdf_240101.zip",
+                "ensdf_240305.zip",
+                "ensdf_240402.zip",
+                "ensdf_240501.zip",
+                "ensdf_240601.zip",
+                "ensdf_240701.zip",
+                "ensdf_240801.zip",
+                "ensdf_240901.zip",
+                "ensdf_241001.zip",
+                "ensdf_241101.zip"
+            ]
+        }
+    ],
+    "latest": {
+        "year": "2024",
+        "files": [            
+            "ensdf_241101.zip"
+        ]
+    }
+}

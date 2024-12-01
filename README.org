@@ -1,0 +1,57 @@
+* nuclear-mass
+This common lisp system includes tools that should make calculations involving
+nuclear masses as painless as possible.
+
+** Examples
+
+#+begin_src lisp
+  (ql:quickload :nuclear-mass)
+  (nuclear-mass:get-atomic-mass "23na")
+#+end_src
+
+#+RESULTS:
+: 22.98976928195
+
+#+begin_src lisp
+  (nuclear-mass:get-nuclear-mass "23na") ;; subtracts binding energy
+#+end_src
+
+#+RESULTS:
+: 22.983739681707874
+
+You can change to different versions of AME:
+
+#+begin_src lisp
+    (reduce #'-
+            (nuclear-mass:with-mass-table (nuclear-mass:mass93 nuclear-mass:mass20)
+      (nuclear-mass:atomic-units->kev (nuclear-mass:get-atomic-mass "20mg"))))
+#+end_src
+
+#+RESULTS:
+: 92.8196613304317
+
+Indicating that the mass of $^{20}$Mg was 93 keV greater in AME 1993 compared to 2020.
+
+ENSDF is also included, and is automatically updated whenever the package is loaded.
+#+begin_src lisp
+  (nuclear-mass:get-ground-state-spin "23na") 
+#+end_src
+
+#+RESULTS:
+: 3/2+
+
+You can look for levels that match a lab-frame resonance energy.
+#+begin_src lisp
+  (mapc (lambda (level)
+            (print level))
+          (nuclear-mass:find-states-near-resonance 170.0 "1h" "23na" :delta 20.0))
+#+end_src
+
+#+RESULTS:
+: (#<NUCLEAR-MASS::LEVEL {Ex=11860 | Jpi=(8+)}>
+:  #<NUCLEAR-MASS::LEVEL {Ex=11862.8 | Jpi=1-}>)
+
+*AND MORE!*
+
+* License
+GPL v3
