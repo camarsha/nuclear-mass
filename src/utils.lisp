@@ -5,3 +5,7 @@
     (if file
 	(merge-pathnames file system-path)
 	system-path)))
+
+(declaim (inline sqr))
+(defun sqr (x)
+  (* x x))

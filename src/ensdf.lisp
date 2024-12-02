@@ -102,20 +102,24 @@ Captures the variables data-set and data-sets."
 (defclass level ()
   ((excitation-energy :accessor excitation-energy
 		      :initarg :excitation-energy)
+   (excitation-unc :accessor excitation-unc
+		   :initarg :excitation-unc)
    (spin :accessor spin
 	 :initarg :spin
 	 :initform ""
 	 :type (simple-array character (*)))
    (parsed-energy :accessor parsed-energy
 		  :initarg :parsed-energy
-		  :type double-float)))
+		  :type double-float)
+   (parsed-unc :accessor parsed-unc
+	       :initarg :parsed-unc
+	       :type double-float)))
 
 (defmethod print-object ((obj level) out)
   (print-unreadable-object (obj out :type t)
-    (format out "{Ex=~A | Jpi=~A}" (excitation-energy obj) (spin obj))))
+    (format out "{Ex=~A(~A) | Jpi=~A}" (excitation-energy obj) (excitation-unc obj) (spin obj))))
 
-
-(defun try-parse-level (string)
+(defun try-parse-energy (string)
   "Attempts to parse the level as a floating point number, if that
 fails parse the string character by character collecting only the numerical characters and
 decimals then try and parse again."
@@ -128,11 +132,31 @@ decimals then try and parse again."
 	      collect char into new-string
 	    finally (return (parse-number:parse-number (concatenate 'string new-string)))))))
 
+
+(defun try-parse-unc (energy unc-string)
+  "ENSDF uncertainty is on the last significant digits."
+  (let  ((dec-length (arrows:->> energy
+				 (write-to-string)
+				 (str:split ".")
+				 (cdr)
+				 (car)
+				 (length)))
+	 (unc (handler-case (parse-integer unc-string)
+		(sb-int:simple-parse-error (c)
+		  (declare (ignorable c))
+		  0d0))))
+    (/ unc (expt 10d0 dec-length))))
+
+
 (defun make-level (ensdf-line)
-  (let ((excitation-string (string-trim '(#\Space) (subseq ensdf-line 9 19))))
+  (let* ((excitation-string (string-trim '(#\Space) (subseq ensdf-line 9 19)))
+	 (excitation-unc (string-trim '(#\Space) (subseq ensdf-line 19 21)))
+	 (parsed-energy (try-parse-energy excitation-string)))
     (make-instance 'level
 		   :excitation-energy excitation-string
-		   :parsed-energy (try-parse-level excitation-string)
+		   :excitation-unc excitation-unc
+		   :parsed-energy parsed-energy
+		   :parsed-unc (try-parse-unc parsed-energy excitation-unc)
 		   :spin (string-trim '(#\Space) (subseq ensdf-line 21 39)))))
 
 (defun make-nucleus-levels (nucleus-name)
@@ -197,5 +221,13 @@ known states close to an observed resonance."
 	    level (* com-conversion resonance-energy))))
 
 
-
+(defun levels->csv (file-name list-of-levels)
+  "Write a list of LEVELS to a csv file."
+  (with-open-file (stream file-name :direction :output
+				    :if-does-not-exist :create
+				    :if-exists :supersede)
+    (format stream "~&Ex,dEx,J_pi~%")
+    (dolist (level list-of-levels)
+      (with-slots ((ex parsed-energy) (unc parsed-unc) spin) level
+	(format stream "~A,~A,~A~%" ex unc (str:replace-all "," "/" spin))))))
 

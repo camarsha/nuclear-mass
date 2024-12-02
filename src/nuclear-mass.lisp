@@ -61,15 +61,16 @@
   (/ mev +atomic-units->mev+))
 
 (defun get-nuclei-info (element number)
+  "Pull the line from the mass table."
   (let ((element-index
 	  (etypecase element
 	    (number 2)
 	    (string 4))))
-    (loop with element-str = (if (numberp element)
-				 (write-to-string element)
-				 element)
-	  for line in *mass-table*
-	  do
+    (loop :with element-str = (if (numberp element)
+				  (write-to-string element)
+				  element)
+	  :for line :in *mass-table*
+	  :do
 	     (when (and (string= (nth 3 line) number)
 			(string= (nth element-index line) element-str))
 	       (return line)))))
@@ -81,13 +82,15 @@
      1000.0))
 
 (defun atomic-mass->nuclear-mass (atomic-mass charge-number)
+  "Converts an atomic mass to nuclear mass. ATOMIC-MASS is
+an instance of the MEASUREMENT class."
   (let ((binding-energy (electron-binding-energy charge-number))
 	(total-electron-mass (* +electron-mass+ charge-number))
-	(mass-kev (* (atomic-units->mev (value atomic-mass)) 1000.0)))
+	(mass-kev (atomic-units->kev (value atomic-mass))))
     (make-instance 'measurement
-		   :value (mev->atomic-units(/ (+ (- mass-kev total-electron-mass)
-						  binding-energy)
-					       1000.0))
+		   :value (mev->atomic-units (/ (+ (- mass-kev total-electron-mass)
+						   binding-energy)
+						1000.0))
 		   :uncertainty (uncertainty atomic-mass))))
 
 (defclass nucleus ()
@@ -108,12 +111,17 @@
 				   (slot-value nuc 'charge-number))))
 
 (defmethod print-object ((nuc nucleus) out)
-  (format out "Name: ~A~%A = ~A~%Z = ~A~%Atomic Mass = ~A~%Nuclear Mass = ~A~% "
-	  (name nuc)
-	  (mass-number nuc)
-	  (charge-number nuc)
-	  (value (atomic-mass nuc))
-	  (value (nuclear-mass nuc))))
+  (print-unreadable-object (nuc out :type t)
+    (format out "{Name: ~A | A = ~A | Z = ~A | Atomic Mass = ~,3F | Nuclear Mass = ~,3F}"
+	    (name nuc)
+	    (mass-number nuc)
+	    (charge-number nuc)
+	    (value (atomic-mass nuc))
+	    (value (nuclear-mass nuc)))))
+
+(defmethod print-object ((obj measurement) out)
+  (print-unreadable-object (obj out :type t)
+    (format out "{VALUE: ~,3F | UNC: ~,3E}" (value obj) (uncertainty obj))))
 
 (defun translate-nucleus-name (string)
   "Everyone will want to write a nucleus differently,
@@ -140,7 +148,6 @@ na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
 
 (defun make-nucleus (nucleus-name)
   "Creates a nucleus object from a string containing the atomic mass number and element name."
-  (declare (optimize (debug 3)))
   (when (or (string= nucleus-name "g")
 	    (string= nucleus-name "G"))
     (return-from make-nucleus (make-photon)))
@@ -195,24 +202,24 @@ na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
 	(final 0d0)
 	(uncertainty 0d0))
     ;; first do the initial masses
-    (loop for (mass unc) in (mapcar (lambda (nuc)
-				      (multiple-value-list
-				       (funcall mass-function nuc)))
-				    nuclei-in)
-	  do
+    (loop :for (mass unc) :in (mapcar (lambda (nuc)
+					(multiple-value-list
+					 (funcall mass-function nuc)))
+				      nuclei-in)
+	  :do
 	     (incf initial mass)
 	     (incf uncertainty (expt unc 2)))
     ;; next the final
-    (loop for (mass unc) in (mapcar (lambda (nuc)
-				      (multiple-value-list
-				       (funcall mass-function nuc)))
-				    nuclei-out)
-	  do
+    (loop :for (mass unc) :in (mapcar (lambda (nuc)
+					(multiple-value-list
+					 (funcall mass-function nuc)))
+				      nuclei-out)
+	  :do
 	     (incf final mass)
 	     (incf uncertainty (expt unc 2)))
     ;; convert to keV
-    (values (* 1000.0 (atomic-units->mev (- initial final)))
-	    (* 1000.0 (atomic-units->mev (sqrt uncertainty))))))
+    (values (atomic-units->kev (- initial final))
+	    (atomic-units->kev (sqrt uncertainty)))))
 
 (defun de-broglie-wavelength (projectile target energy &key (mass-function #'get-nuclear-mass))
   "Calculate the center of mass de-Broglie wavelength from a laboratory resonance energy (keV).
@@ -235,6 +242,28 @@ See Iliadis Eq. 4.107"
 	(m-1 (funcall mass-function target)))
     (* r0 (+ (expt m-0 1/3)
 	     (expt m-1 1/3)))))
+
+(defun gamow-peak (projectile target temperature)
+  "Calculate the gamow peak energy for a given TEMPERATURE in GK."
+  (with-slots ((m0 atomic-mass) (z0 charge-number)) (make-nucleus projectile)
+    (with-slots ((m1 atomic-mass) (z1 charge-number)) (make-nucleus target)
+      (let* ((m0 (value m0))
+	     (m1 (value m1))
+	     (const (* (sqr z0)
+		       (sqr z1)
+		       (/ (* m0 m1)
+			  (+ m0 m1))))
+	     (peak 
+	       (* 0.1220 1000.0
+		  (expt
+		   (* const
+		      (sqr temperature))
+		   1/3)))
+	     (width (* 0.2368 1000.0
+		       (expt
+			(* const (expt temperature 5))
+			1/6))))
+	(values peak width)))))
 
 
 (defmacro with-nuclear-masses (mass-list &body body)
