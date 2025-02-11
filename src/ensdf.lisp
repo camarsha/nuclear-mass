@@ -133,19 +133,24 @@ decimals then try and parse again."
 	    finally (return (parse-number:parse-number (concatenate 'string new-string)))))))
 
 
-(defun try-parse-unc (energy unc-string)
+(defun try-parse-unc (energy-string-raw unc-string)
   "ENSDF uncertainty is on the last significant digits."
-  (let  ((dec-length (arrows:->> energy
-				 (write-to-string)
-				 (str:split ".")
-				 (cdr)
-				 (car)
-				 (length)))
-	 (unc (handler-case (parse-integer unc-string)
-		(sb-int:simple-parse-error (c)
-		  (declare (ignorable c))
-		  0d0))))
-    (/ unc (expt 10d0 dec-length))))
+  (let*  ((dec-length (arrows:->> energy-string-raw
+				  (str:split ".")
+				  (cdr)
+				  (car)
+				  (length)))
+	  (exponent-term (arrows:->> energy-string-raw
+				     (str:split "E")
+				     (cdr)))
+	  (exponent-correction (if exponent-term
+				   (parse-integer (car exponent-term))
+				   0))
+	  (unc (handler-case (parse-integer unc-string)
+		 (sb-int:simple-parse-error (c)
+		   (declare (ignorable c))
+		   0d0))))
+    (/ unc (expt 10d0 (- exponent-correction dec-length)))))
 
 
 (defun make-level (ensdf-line)
@@ -156,7 +161,7 @@ decimals then try and parse again."
 		   :excitation-energy excitation-string
 		   :excitation-unc excitation-unc
 		   :parsed-energy parsed-energy
-		   :parsed-unc (try-parse-unc parsed-energy excitation-unc)
+		   :parsed-unc (try-parse-unc excitation-string excitation-unc)
 		   :spin (string-trim '(#\Space) (subseq ensdf-line 21 39)))))
 
 (defun make-nucleus-levels (nucleus-name)
@@ -197,7 +202,7 @@ decimals then try and parse again."
 	  if (<= lower energy upper)
 	    collect level)))
 
-(defun find-states-near-resonance (resonance-energy projectile target &key (delta 5.0))
+(defun find-states-near-resonance (resonance-energy projectile target &key (delta 5.0) center-of-mass)
   "Given an resonance energy observed in the lab between PROJECTILE and TARGET find
 all excited states that are with DELTA. In other words quickly see if there are any
 known states close to an observed resonance." 
@@ -213,9 +218,11 @@ known states close to an observed resonance."
 	 (separation-energy (q-value (list projectile target)
 				     (list compound-name)
 				     :mass-function #'get-atomic-mass))
-	 (com-conversion (/ (value (atomic-mass target-nucleus))
-			    (+ (value (atomic-mass target-nucleus))
-			       (value (atomic-mass projectile-nucleus)))))
+	 (com-conversion (if center-of-mass
+			     1d0
+			     (/ (value (atomic-mass target-nucleus))
+				(+ (value (atomic-mass target-nucleus))
+				   (value (atomic-mass projectile-nucleus))))))
 	 (level (+ separation-energy (* com-conversion resonance-energy))))
     (values (find-levels compound-name level :delta delta)
 	    level (* com-conversion resonance-energy))))

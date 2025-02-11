@@ -14,8 +14,8 @@
 				    (alexandria:read-file-into-string *mass-table-path*)))
   "List of lists of the mass csv file.")
 
-(defvar +electron-mass+ 510.99895000
-  "Mass of electron in keV")
+(defvar +electron-mass+ 510.998950691753
+  "Mass of electron in keV, CODATA 2022")
 
 (defvar +atomic-units->mev+ 931.49410242
   "Number of MeV in 1u.")

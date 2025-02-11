@@ -49,4 +49,5 @@
    :*ensdf-url*
    :*ensdf-json-url*
    :atomic-units->kev
-   :gamow-peak))
+   :gamow-peak
+   :levels->csv))

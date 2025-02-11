@@ -438,14 +438,22 @@
                 "ensdf_240801.zip",
                 "ensdf_240901.zip",
                 "ensdf_241001.zip",
-                "ensdf_241101.zip"
+                "ensdf_241101.zip",
+                "ensdf_241201.zip"
+            ]
+        },
+        {
+            "year": "2025",
+            "files": [
+                "ensdf_250101.zip",
+                "ensdf_250201.zip"
             ]
         }
     ],
     "latest": {
-        "year": "2024",
+        "year": "2025",
         "files": [            
-            "ensdf_241101.zip"
+            "ensdf_250201.zip"
         ]
     }
 }
