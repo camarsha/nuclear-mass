@@ -31,4 +31,5 @@
 			     (:file "utils")
 			     (:file "nuclear-mass")
 			     (:file "ensdf-scrap")
-			     (:file "ensdf")))))
+			     (:file "ensdf")
+			     (:file "ensdf-gammas")))))

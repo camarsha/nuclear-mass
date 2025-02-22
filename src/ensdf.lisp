@@ -21,10 +21,10 @@
 
 (defun get-ensdf-mass-file (zip mass-number)
   "Given a mass number, find the ensdf entry in the zip archive."
-  (loop with mass-string = (mass-number->ensdf-filename mass-number)
-	for entry across (zippy:entries zip)
-	when (string= (zippy:file-name entry) mass-string)
-	  do (return-from get-ensdf-mass-file entry)))
+  (loop :with mass-string = (mass-number->ensdf-filename mass-number)
+	:for entry :across (zippy:entries zip)
+	:when (string= (zippy:file-name entry) mass-string)
+	  :do (return-from get-ensdf-mass-file entry)))
 
 (defun ensdf-nucid (nucleus-name)
   "Convert a name and number into a properly formatted ensdf string."
@@ -51,11 +51,12 @@
   (let* ((data (slice array start end)))
     (make-instance 'data-set :start start
 			     :end end
-			     :data (loop with start = 0
-					 for i from 0 below (length data)
-					 if (= (aref data i) 10)
-					   collect (map 'string #'code-char (slice data start i))
-					   and do (setf start (1+ i))))))
+			     :data
+			     (loop :with start = 0
+				   :for i :from 0 :below (length data)
+				   :if (= (aref data i) 10)
+				     :collect (map 'string #'code-char (slice data start i))
+				     :and :do (setf start (1+ i))))))
 
 (defmethod print-object ((obj data-set) out)
   (print-unreadable-object (obj out :type t)
@@ -84,7 +85,6 @@ Captures the variables data-set and data-sets."
 	   do
 	   ,@body)))
 
-
 (defun get-ensdf-level-records (ensdf-entry nucleus-name)
   (loop-over-data-sets ensdf-entry
     (when (and (search "ADOPTED LEVELS" (first data-set))
@@ -96,11 +96,11 @@ Captures the variables data-set and data-sets."
 			      (char= (aref ele 5) #\Space)))
 		       data-set)))))
 
-
 ;;; Now these the api functions
 
 (defclass level ()
-  ((excitation-energy :accessor excitation-energy
+  ((name :accessor name :initarg :name)
+   (excitation-energy :accessor excitation-energy
 		      :initarg :excitation-energy)
    (excitation-unc :accessor excitation-unc
 		   :initarg :excitation-unc)
@@ -127,10 +127,13 @@ decimals then try and parse again."
     (sb-int:simple-parse-error (c)
       (declare (ignorable c))
       ;; This loop removes all of the junk and then parses the number again.
-      (loop for char across string
-	    if (or (digit-char-p char) (char= #\. char))
-	      collect char into new-string
-	    finally (return (parse-number:parse-number (concatenate 'string new-string)))))))
+      nil)
+    (sb-int:invalid-array-index-error (c)
+      (declare (ignorable c))
+      nil)
+    (parse-number:invalid-number (c)
+      (declare (ignorable c))
+      nil)))
 
 
 (defun try-parse-unc (energy-string-raw unc-string)
@@ -143,32 +146,36 @@ decimals then try and parse again."
 	  (exponent-term (arrows:->> energy-string-raw
 				     (str:split "E")
 				     (cdr)))
-	  (exponent-correction (if exponent-term
-				   (parse-integer (car exponent-term))
-				   0))
+	  (exponent-correction (when exponent-term
+				 (parse-integer (car exponent-term))))
 	  (unc (handler-case (parse-integer unc-string)
 		 (sb-int:simple-parse-error (c)
 		   (declare (ignorable c))
 		   0d0))))
-    (/ unc (expt 10d0 (- exponent-correction dec-length)))))
+    (if exponent-correction
+	(/ unc (expt 10d0 (- exponent-correction dec-length)))
+	(/ unc (expt 10d0 dec-length)))))
 
 
-(defun make-level (ensdf-line)
+(defun make-level (name ensdf-line)
   (let* ((excitation-string (string-trim '(#\Space) (subseq ensdf-line 9 19)))
 	 (excitation-unc (string-trim '(#\Space) (subseq ensdf-line 19 21)))
 	 (parsed-energy (try-parse-energy excitation-string)))
     (make-instance 'level
+		   :name name
 		   :excitation-energy excitation-string
 		   :excitation-unc excitation-unc
 		   :parsed-energy parsed-energy
-		   :parsed-unc (try-parse-unc excitation-string excitation-unc)
+		   :parsed-unc (when parsed-energy
+				 (try-parse-unc excitation-string excitation-unc))
 		   :spin (string-trim '(#\Space) (subseq ensdf-line 21 39)))))
 
 (defun make-nucleus-levels (nucleus-name)
   "Retrieve all of the adopted levels for a given nucleus."
   (let ((proper-name (format nil "~{~A~}"
 			     (reverse (translate-nucleus-name nucleus-name)))))
-    (mapcar #'make-level
+    (mapcar (lambda (ele)
+	      (make-level proper-name ele))
 	    (zippy:with-zip-file (zip *ensdf-archive*)
 	      (get-ensdf-level-records
 	       (get-ensdf-mass-file zip (parse-integer proper-name :junk-allowed t))
