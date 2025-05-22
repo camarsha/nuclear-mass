@@ -20,6 +20,9 @@
 (defvar +atomic-units->mev+ 931.49410242
   "Number of MeV in 1u.")
 
+(defvar +h-bar+ 6.582119569e-16
+  "Reduced Planck's constant in eV s.")
+
 (defun load-mass-table (mass-table-file-path)
   (arrows:->> (alexandria:read-file-into-string mass-table-file-path)
 	      (cl-ppcre:split "\\n")
@@ -98,7 +101,9 @@ an instance of the MEASUREMENT class."
    (charge-number :accessor charge-number :initarg :charge-number)
    (name :accessor name :initarg :name)
    (atomic-mass :accessor atomic-mass :initarg :atomic-mass)
-   (nuclear-mass :accessor nuclear-mass :initarg :nuclear-mass)))
+   (nuclear-mass :accessor nuclear-mass :initarg :nuclear-mass)
+   (mass-excess :accessor mass-excess :initarg :mass-excess)
+   (nuclear-mass-excess :accessor nuclear-mass-excess :initarg :nuclear-mass-excess)))
 
 (defclass measurement () 
   ((value :initarg :value :accessor value)
@@ -108,7 +113,14 @@ an instance of the MEASUREMENT class."
   (declare (ignorable initargs))
   (setf (slot-value nuc 'nuclear-mass)
 	(atomic-mass->nuclear-mass (slot-value nuc 'atomic-mass)
-				   (slot-value nuc 'charge-number))))
+				   (slot-value nuc 'charge-number))
+	;; nuclear mass excess calculation
+	(slot-value nuc 'nuclear-mass-excess)
+	(make-instance 'measurement
+		       :value (+ (- (value (slot-value nuc 'mass-excess))
+				    (* +electron-mass+ (slot-value nuc 'charge-number)))
+				 (electron-binding-energy (slot-value nuc 'charge-number)))
+		       :uncertainty (uncertainty (slot-value nuc 'mass-excess)))))
 
 (defmethod print-object ((nuc nucleus) out)
   (print-unreadable-object (nuc out :type t)
@@ -165,7 +177,13 @@ na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
 					       (nth 12 info)))
 				    :uncertainty (* 1e-6
 						    (parse-number:parse-number
-						     (nth 13 info))))))))
+						     (nth 13 info))))
+		     :mass-excess
+		     (make-instance 'measurement
+				    :value (parse-number:parse-number
+					    (nth 6 info))
+				    :uncertainty (parse-number:parse-number
+						  (nth 7 info)))))))
 
 (defun make-nucleus-from-atomic-number (atomic-mass-number atomic-number)
   "Creates a nucleus object from a mass and atomic number."
@@ -181,7 +199,13 @@ na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
 					     (nth 12 info)))
 				  :uncertainty (* 1e-6
 						  (parse-number:parse-number
-						   (nth 13 info)))))))
+						   (nth 13 info))))
+		   :mass-excess
+		   (make-instance 'measurement
+				  :value (parse-number:parse-number
+					  (nth 6 info))
+				  :uncertainty (parse-number:parse-number
+						(nth 7 info))))))
 
 
 (defun get-atomic-mass (nucleus-name)
@@ -264,6 +288,18 @@ See Iliadis Eq. 4.107"
 			(* const (expt temperature 5))
 			1/6))))
 	(values peak width)))))
+
+
+(deftype lifetime-or-half-life ()
+  '(member :lifetime :half-life))
+
+(declaim (ftype (function (number &optional lifetime-or-half-life) number) line-width))
+(defun line-width (value &optional (lifetime-or-half-life :lifetime))
+  "Returns the line width in eV."
+  (case lifetime-or-half-life
+    (:lifetime (/ +h-bar+ value))
+    (:half-life (/ +h-bar+
+		   (/ value (log 2))))))
 
 
 (defmacro with-nuclear-masses (mass-list &body body)

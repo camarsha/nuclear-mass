@@ -50,4 +50,10 @@
    :*ensdf-json-url*
    :atomic-units->kev
    :gamow-peak
-   :levels->csv))
+   :levels->csv
+   :atomic-mass->nuclear-mass
+   :value
+   :uncertainty
+   :mass-excess
+   :nuclear-mass-excess
+   :define-mass-table))

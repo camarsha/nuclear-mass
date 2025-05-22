@@ -79,7 +79,7 @@
       (dolist (ele list)
 	(when (car ele)
 	  (dolist (gamma (car ele))
-	    (when (and (energy gamma) (> (energy-unc gamma) 0d0)) 
+	    (when (energy gamma) 
 	      (push (list (energy gamma) (energy-unc gamma)
 			  (intensity gamma)
 			  (intensity-unc gamma)
