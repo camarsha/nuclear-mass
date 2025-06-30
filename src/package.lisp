@@ -40,8 +40,6 @@
    :mass16
    :mass12
    :mass03
-   :mass95
-   :mass93
    :compare-masses
    :with-mass-table
    :ame->csv

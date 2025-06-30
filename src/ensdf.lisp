@@ -28,7 +28,7 @@
 
 (defun ensdf-nucid (nucleus-name)
   "Convert a name and number into a properly formatted ensdf string."
-  (destructuring-bind (name number)
+  (destructuring-bind (number name)
       (translate-nucleus-name nucleus-name)
     (format nil "~3@a~:@(~2a~)" number name)))
 
@@ -173,7 +173,7 @@ decimals then try and parse again."
 (defun make-nucleus-levels (nucleus-name)
   "Retrieve all of the adopted levels for a given nucleus."
   (let ((proper-name (format nil "~{~A~}"
-			     (reverse (translate-nucleus-name nucleus-name)))))
+			     (translate-nucleus-name nucleus-name))))
     (mapcar (lambda (ele)
 	      (make-level proper-name ele))
 	    (zippy:with-zip-file (zip *ensdf-archive*)
@@ -194,6 +194,7 @@ decimals then try and parse again."
   "Returns a list of all levels within an energy range. Two options can be used:
 1) Specify a level and look for all levels within some delta
 2) Specify an energy range as a list of (lower upper)"
+  (declare (optimize (debug 3)))
   (let ((levels nil)
 	(lower (if energy-range
 		   (first energy-range)
@@ -206,7 +207,7 @@ decimals then try and parse again."
       (list (setf levels levels-or-nucleus)))
     (loop for level in levels
 	  for energy = (parsed-energy level)
-	  if (<= lower energy upper)
+	  if (and energy (<= lower energy upper)) ;; check that the energy parsed
 	    collect level)))
 
 (defun find-states-near-resonance (resonance-energy projectile target &key (delta 5.0) center-of-mass)

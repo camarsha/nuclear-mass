@@ -449,14 +449,15 @@
                 "ensdf_250201.zip",
                 "ensdf_250301.zip",
                 "ensdf_250401.zip",
-                "ensdf_250501.zip"
+                "ensdf_250501.zip",
+                "ensdf_250601.zip"
             ]
         }
     ],
     "latest": {
         "year": "2025",
-        "files": [            
-            "ensdf_250501.zip"
+        "files": [
+            "ensdf_250601.zip"
         ]
     }
 }

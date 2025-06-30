@@ -55,7 +55,6 @@
 				    (str:substring 0 5)
 				    (str:trim)
 				    (translate-nucleus-name)
-				    (reverse)
 				    (apply #'str:concat))
 		(sera:@ result current) '())
 	  ;; Now we associate a level with all of the gammas

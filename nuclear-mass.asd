@@ -29,6 +29,7 @@
 	       (:module "src"
 		:components ((:file "package")
 			     (:file "utils")
+			     (:file "mass-table")
 			     (:file "nuclear-mass")
 			     (:file "ensdf-scrap")
 			     (:file "ensdf")

@@ -1,55 +1,5 @@
 ;;;; nuclear-mass.lisp
-
 (in-package #:nuclear-mass)
-
-
-(defparameter *mass-table-path*
-  (package-path "./mass-eval/" "mass20.csv")
-  "Path to the mass csv file.")
-
-(defparameter *mass-table* (mapcar (lambda (line)
-				     (cl-ppcre:split "," line))
-				   (cl-ppcre:split
-				    "\\n"
-				    (alexandria:read-file-into-string *mass-table-path*)))
-  "List of lists of the mass csv file.")
-
-(defvar +electron-mass+ 510.998950691753
-  "Mass of electron in keV, CODATA 2022")
-
-(defvar +atomic-units->mev+ 931.49410242
-  "Number of MeV in 1u.")
-
-(defvar +h-bar+ 6.582119569e-16
-  "Reduced Planck's constant in eV s.")
-
-(defun load-mass-table (mass-table-file-path)
-  (arrows:->> (alexandria:read-file-into-string mass-table-file-path)
-	      (cl-ppcre:split "\\n")
-	      (mapcar (lambda (line)
-			(cl-ppcre:split "," line)))))
-
-(defmacro define-mass-table (name mass-table-file-path)
-  `(defparameter ,name
-     (load-mass-table
-      (package-path "./mass-eval/" ,mass-table-file-path))))
-
-
-(defmacro with-mass-table (mass-table &body body)
-  (if (consp mass-table)
-      `(list ,@(loop :for mt :in mass-table
-		     :collect `(let ((*mass-table* ,mt))
-				 ,@body)))
-      `(let ((*mass-table* ,mass-table))
-	 ,@body)))
-
-(define-mass-table mass20 "mass20.csv")
-(define-mass-table mass16 "mass16.csv")
-(define-mass-table mass12 "mass12.csv")
-(define-mass-table mass03 "mass03.csv")
-(define-mass-table mass95 "mass95.csv")
-(define-mass-table mass93 "mass93.csv")
-
 
 (declaim (inline atomic-units->mev))
 (defun atomic-units->mev (u)
@@ -63,20 +13,12 @@
 (defun mev->atomic-units (mev)
   (/ mev +atomic-units->mev+))
 
-(defun get-nuclei-info (element number)
-  "Pull the line from the mass table."
-  (let ((element-index
-	  (etypecase element
-	    (number 2)
-	    (string 4))))
-    (loop :with element-str = (if (numberp element)
-				  (write-to-string element)
-				  element)
-	  :for line :in *mass-table*
-	  :do
-	     (when (and (string= (nth 3 line) number)
-			(string= (nth element-index line) element-str))
-	       (return line)))))
+(defun get-nuclei-info (string)
+  "Pull the info from the mass table hash."
+  (arrows:->> string
+	      translate-nucleus-name
+	      (apply #'str:concat)
+	      (sera:@ *mass-table*)))
 
 (defun electron-binding-energy (charge-number)
   "Binding energy in keV. Adapted from Eq.A4 of Lunney et. al. 2003."
@@ -135,22 +77,6 @@ an instance of the MEASUREMENT class."
   (print-unreadable-object (obj out :type t)
     (format out "{VALUE: ~,3F | UNC: ~,3E}" (value obj) (uncertainty obj))))
 
-(defun translate-nucleus-name (string)
-  "Everyone will want to write a nucleus differently,
-this function normalizes them all for the rest of the package.
-na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
-  (when (member string (list "1n" "n" "N") :test 'string=)
-    (return-from translate-nucleus-name (list "n" "1")))
-  (when (string= string "p")
-    (return-from translate-nucleus-name (list "H" "1")))
-  (when (string= string "a")
-    (return-from translate-nucleus-name (list "He" "4")))
-  (list (string-capitalize ;;name
-	 (first
-	  (cl-ppcre:all-matches-as-strings "[a-zA-Z]+" string)))
-	(first ;; number
-	 (cl-ppcre:all-matches-as-strings "\\d+" string))))
-
 (defun make-photon ()
   (make-instance 'nucleus
 		 :charge-number 0
@@ -163,49 +89,26 @@ na 23, 23Na, 23na, 23NA, 23  na, should all give you 23Na"
   (when (or (string= nucleus-name "g")
 	    (string= nucleus-name "G"))
     (return-from make-nucleus (make-photon)))
-  (destructuring-bind (name number)
-      (translate-nucleus-name nucleus-name)
-    (let ((info (get-nuclei-info name number)))
-      (make-instance 'nucleus
-		     :charge-number (parse-integer (nth 2 info))
-		     :mass-number (parse-integer (nth 3 info))
-		     :name (nth 4 info)
-		     :atomic-mass
-		     (make-instance 'measurement
-				    :value (* 1e-6
-					      (parse-number:parse-number
-					       (nth 12 info)))
-				    :uncertainty (* 1e-6
-						    (parse-number:parse-number
-						     (nth 13 info))))
-		     :mass-excess
-		     (make-instance 'measurement
-				    :value (parse-number:parse-number
-					    (nth 6 info))
-				    :uncertainty (parse-number:parse-number
-						  (nth 7 info)))))))
+  (let ((info (get-nuclei-info nucleus-name)))
+    (make-instance 'nucleus
+		   :charge-number (aref info 0)
+		   :mass-number (aref info 1)
+		   :name (aref info 2)
+		   :atomic-mass
+		   (make-instance 'measurement
+				  :value (aref info 3)
+				  :uncertainty (aref info 4))
+		   :mass-excess
+		   (make-instance 'measurement
+				  :value (aref info 5)
+				  :uncertainty (aref info 6)))))
 
 (defun make-nucleus-from-atomic-number (atomic-mass-number atomic-number)
   "Creates a nucleus object from a mass and atomic number."
-  (let ((info (get-nuclei-info atomic-number (write-to-string atomic-mass-number))))
-    (make-instance 'nucleus
-		   :charge-number (parse-integer (nth 2 info))
-		   :mass-number (parse-integer (nth 3 info))
-		   :name (nth 4 info)
-		   :atomic-mass
-		   (make-instance 'measurement
-				  :value (* 1e-6
-					    (parse-number:parse-number
-					     (nth 12 info)))
-				  :uncertainty (* 1e-6
-						  (parse-number:parse-number
-						   (nth 13 info))))
-		   :mass-excess
-		   (make-instance 'measurement
-				  :value (parse-number:parse-number
-					  (nth 6 info))
-				  :uncertainty (parse-number:parse-number
-						(nth 7 info))))))
+  (arrows:->> atomic-number
+	      (aref *atomic-number-to-mass-name*)
+	      (format nil "~A~A" atomic-mass-number)
+	      (make-nucleus)))
 
 
 (defun get-atomic-mass (nucleus-name)
@@ -301,6 +204,22 @@ See Iliadis Eq. 4.107"
     (:half-life (/ +h-bar+
 		   (/ value (log 2))))))
 
+(defun gamow-factor (projectile target energy)
+  "Eq. 3.71 and Eq. 3.75 in Iliadis. Energy in MeV."
+  (with-slots ((m0 atomic-mass) (z0 charge-number)) (make-nucleus projectile)
+    (with-slots ((m1 atomic-mass) (z1 charge-number)) (make-nucleus target)
+      (let ((2-pi-eta  (* 0.98951013 z0 z1 (sqrt (* (/ (* (value m0) (value m1))
+						       (+ (value m0) (value m1)))
+						    (/ 1.0 energy))))))
+	(exp (* -1.0 2-pi-eta))))))
+
+(defun s-factor->cross-section (projectile target s-factor energy)
+  "Calculate the reaction cross section based on the astrophysical s-factor."
+  (* (/ 1.0 energy)
+     (gamow-factor projectile target energy)
+     s-factor))
+
+(defun cross-section->s-factor (projectile target cross-section energy))
 
 (defmacro with-nuclear-masses (mass-list &body body)
   `(prog1
