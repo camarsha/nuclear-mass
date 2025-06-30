@@ -19,18 +19,18 @@ nuclear masses as painless as possible.
 #+RESULTS:
 : 22.983739681707874
 
-You can change to different versions of AME:
+You can change to different versions of AME (back to 2003):
 
 #+begin_src lisp
     (reduce #'-
-            (nuclear-mass:with-mass-table (nuclear-mass:mass93 nuclear-mass:mass20)
+            (nuclear-mass:with-mass-table (nuclear-mass:mass03 nuclear-mass:mass20)
       (nuclear-mass:atomic-units->kev (nuclear-mass:get-atomic-mass "20mg"))))
 #+end_src
 
 #+RESULTS:
 : 92.8196613304317
 
-Indicating that the mass of \(^{20}\)Mg was 93 keV greater in AME 1993 compared to 2020.
+Indicating that the mass of \(^{20}\)Mg was 93 keV greater in AME 2003 compared to 2020.
 
 ENSDF is also included, and is automatically updated whenever the package is loaded.
 #+begin_src lisp
