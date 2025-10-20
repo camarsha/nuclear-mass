@@ -214,12 +214,24 @@ See Iliadis Eq. 4.107"
 	(exp (* -1.0 2-pi-eta))))))
 
 (defun s-factor->cross-section (projectile target s-factor energy)
-  "Calculate the reaction cross section based on the astrophysical s-factor."
+  "Calculate the reaction cross section based on the astrophysical s-factor.
+Energy must be MeV in the center-of-mass frame."
   (* (/ 1.0 energy)
      (gamow-factor projectile target energy)
      s-factor))
 
-(defun cross-section->s-factor (projectile target cross-section energy))
+(defun cross-section->s-factor (projectile target cross-section energy)
+  "Calculate the astrophysical s-factor from the cross section.
+Energy must be MeV in the center-of-mass frame."
+  (* cross-section energy (/ 1.0 (gamow-factor projectile target energy))))
+
+(defun add-nuclei (&rest nuc)
+  "Find the compound system from two nuclei."
+  (let* ((nuc-list (mapcar #'make-nucleus nuc))
+	 (a (reduce #'+ nuc-list :key #'mass-number))
+	 (z (reduce #'+ nuc-list :key #'charge-number)))
+    (make-nucleus-from-atomic-number a z)))
+
 
 (defmacro with-nuclear-masses (mass-list &body body)
   `(prog1

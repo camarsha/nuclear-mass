@@ -32,6 +32,7 @@
    :make-nucleus-levels
    :spin
    :excitation-energy
+   :width-or-half-life
    :with-nuclear-masses
    :with-atomic-masses
    :find-levels
@@ -54,4 +55,13 @@
    :uncertainty
    :mass-excess
    :nuclear-mass-excess
-   :define-mass-table))
+   :define-mass-table
+   :level
+   :excitation-unc
+   :parsed-energy
+   :parsed-unc
+   :+electron-charge+
+   :s-factor->cross-section
+   :cross-section->s-factor
+   :add-nuclei))
+

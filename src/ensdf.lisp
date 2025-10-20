@@ -108,6 +108,10 @@ Captures the variables data-set and data-sets."
 	 :initarg :spin
 	 :initform ""
 	 :type (simple-array character (*)))
+   (width-or-half-life :accessor width-or-half-life
+		       :initarg :width-or-half-life
+		       :initform ""
+		       :type (simple-array character (*)))
    (parsed-energy :accessor parsed-energy
 		  :initarg :parsed-energy
 		  :type double-float)
@@ -168,7 +172,8 @@ decimals then try and parse again."
 		   :parsed-energy parsed-energy
 		   :parsed-unc (when parsed-energy
 				 (try-parse-unc excitation-string excitation-unc))
-		   :spin (string-trim '(#\Space) (subseq ensdf-line 21 39)))))
+		   :spin (string-trim '(#\Space) (subseq ensdf-line 21 39))
+		   :width-or-half-life (string-trim '(#\Space) (subseq ensdf-line 39 49)))))
 
 (defun make-nucleus-levels (nucleus-name)
   "Retrieve all of the adopted levels for a given nucleus."

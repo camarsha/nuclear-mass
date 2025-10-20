@@ -13,6 +13,9 @@
 (defvar +electron-mass+ 510.998950691753
   "Mass of electron in keV, CODATA 2022")
 
+(defvar +electron-charge+ 1.602176634e-19
+  "Electron charge in coulombs, CODATA 2022")
+
 (defvar +atomic-units->mev+ 931.49410242
   "Number of MeV in 1u.")
 
