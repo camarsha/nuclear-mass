@@ -2,7 +2,6 @@
 
 (defun make-mass-table-hash (list)
   "Make a hash table from the list of lists"
-  (declare (optimize (debug 3)))
   (let ((result (make-hash-table :test 'equal)))
     ;; loop and add info to hash
     (loop :for line :in list
@@ -44,8 +43,6 @@
 
 (defparameter *mass-table* (load-mass-table *mass-table-path*)
   "Hash table of the mass csv file.")
-
-
 
 (defmacro define-mass-table (name mass-table-file-path)
   (format t "~& Defining mass table ~A~%" name)

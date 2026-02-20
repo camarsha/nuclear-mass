@@ -1,6 +1,8 @@
 ;;;; nuclear-mass.lisp
 (in-package #:nuclear-mass)
 
+(defparameter *default-mass-function* #'get-atomic-mass)
+
 (declaim (inline atomic-units->mev))
 (defun atomic-units->mev (u)
   (* u +atomic-units->mev+))
@@ -53,6 +55,11 @@ an instance of the MEASUREMENT class."
 
 (defmethod initialize-instance :after ((nuc nucleus) &rest initargs)
   (declare (ignorable initargs))
+  (when (string= (slot-value nuc 'name) "g")
+    (setf (slot-value nuc 'nuclear-mass) 0.0)
+    (return-from initialize-instance
+      (setf (slot-value nuc 'nuclear-mass-excess)
+	    (make-instance 'measurement :value 0.0 :uncertainty 0.0))))
   (setf (slot-value nuc 'nuclear-mass)
 	(atomic-mass->nuclear-mass (slot-value nuc 'atomic-mass)
 				   (slot-value nuc 'charge-number))
@@ -123,7 +130,7 @@ an instance of the MEASUREMENT class."
     (values (value mass)
 	    (uncertainty mass))))
 
-(defun q-value (nuclei-in nuclei-out &key (mass-function #'get-nuclear-mass))
+(defun q-value (nuclei-in nuclei-out &key (mass-function *default-mass-function*))
   "Calculate the q-value in keV according to a :mass-function. Default is nuclear mass."
   (let ((initial 0d0)
 	(final 0d0)
@@ -148,7 +155,7 @@ an instance of the MEASUREMENT class."
     (values (atomic-units->kev (- initial final))
 	    (atomic-units->kev (sqrt uncertainty)))))
 
-(defun de-broglie-wavelength (projectile target energy &key (mass-function #'get-nuclear-mass))
+(defun de-broglie-wavelength (projectile target energy &key (mass-function *default-mass-function*))
   "Calculate the center of mass de-Broglie wavelength from a laboratory resonance energy (keV).
 See Iliadis Eq. 4.107"
   (let ((m-0 (funcall mass-function projectile))
@@ -158,17 +165,17 @@ See Iliadis Eq. 4.107"
 	(/ (* 4.125d-18 2.0)
 	   (* m-0 (* 1000.0 energy)))))))
 
-(defun reduced-mass (projectile target &key (mass-function #'get-nuclear-mass))
+(defun reduced-mass (projectile target &key (mass-function *default-mass-function*))
   (let ((m-0 (funcall mass-function projectile))
 	(m-1 (funcall mass-function target)))
     (/ (* m-0 m-1) (+ m-0 m-1))))
 
 
-(defun nuclear-radius (r0 projectile target &key (mass-function #'get-nuclear-mass))
-  (let ((m-0 (funcall mass-function projectile))
-	(m-1 (funcall mass-function target)))
-    (* r0 (+ (expt m-0 1/3)
-	     (expt m-1 1/3)))))
+  (defun nuclear-radius (r0 projectile target &key (mass-function *default-mass-function*))
+    (let ((m-0 (funcall mass-function projectile))
+	  (m-1 (funcall mass-function target)))
+      (* r0 (+ (expt m-0 1/3)
+	       (expt m-1 1/3)))))
 
 (defun gamow-peak (projectile target temperature)
   "Calculate the gamow peak energy for a given TEMPERATURE in GK."
@@ -235,8 +242,9 @@ Energy must be MeV in the center-of-mass frame."
 
 (defmacro with-nuclear-masses (mass-list &body body)
   `(prog1
-       (let ,(loop for mass in mass-list
-		   collect `(,mass (get-nuclear-mass ,(string mass))))
+       (let ,(append `((*default-mass-function* #'get-nuclear-mass))
+		     (loop for mass in mass-list
+			   collect `(,mass (get-nuclear-mass ,(string mass)))))
 	 ,@body)
      ;; If the symbol did not have a value, unintern it
      (mapc #'unintern
@@ -244,8 +252,9 @@ Energy must be MeV in the center-of-mass frame."
 
 (defmacro with-atomic-masses (mass-list &body body)
   `(prog1
-       (let ,(loop for mass in mass-list
-		   collect `(,mass (get-atomic-mass ,(string mass))))
+       (let ,(append `((*default-mass-function* #'get-atomic-mass))
+		     (loop for mass in mass-list
+			   collect `(,mass (get-atomic-mass ,(string mass)))))
 	 ,@body)
      ;; If the symbol did not have a value, unintern it
      (mapc #'unintern

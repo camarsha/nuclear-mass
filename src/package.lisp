@@ -64,4 +64,3 @@
    :s-factor->cross-section
    :cross-section->s-factor
    :add-nuclei))
-

@@ -188,7 +188,8 @@ decimals then try and parse again."
 
 (defun get-ground-state-spin (nucleus-name &optional return-integer)
   "Get a string for the ground state spin."
-  (let ((result (if (string= nucleus-name "g")
+  (let ((result (if (or (string= nucleus-name "g")
+			(string= nucleus-name "G"))
 		    "1-"
 		    (spin (first (make-nucleus-levels nucleus-name))))))
     (if return-integer
@@ -215,7 +216,8 @@ decimals then try and parse again."
 	  if (and energy (<= lower energy upper)) ;; check that the energy parsed
 	    collect level)))
 
-(defun find-states-near-resonance (resonance-energy projectile target &key (delta 5.0) center-of-mass)
+(defun find-states-near-resonance (resonance-energy projectile target
+				   &key (delta 5.0) (mass-function *default-mass-function*) center-of-mass)
   "Given an resonance energy observed in the lab between PROJECTILE and TARGET find
 all excited states that are with DELTA. In other words quickly see if there are any
 known states close to an observed resonance." 
@@ -230,7 +232,7 @@ known states close to an observed resonance."
 				    (name compound-nucleus)))
 	 (separation-energy (q-value (list projectile target)
 				     (list compound-name)
-				     :mass-function #'get-atomic-mass))
+				     :mass-function mass-function))
 	 (com-conversion (if center-of-mass
 			     1d0
 			     (/ (value (atomic-mass target-nucleus))
